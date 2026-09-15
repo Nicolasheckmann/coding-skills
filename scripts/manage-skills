@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+require "optparse"
+
+# Link whole skill folders so supporting scripts and references stay available.
+# The default destination makes the skills discoverable across projects.
+destination = File.join(Dir.home, ".agents", "skills")
+dry_run = false
+
+# A custom destination is resolved relative to the caller's working directory.
+# Dry runs inspect existing entries but do not create directories or links.
+options = OptionParser.new do |parser|
+  parser.banner = "Usage: manage-skills [options]\nLink this repository's skills into Codex's global skills directory."
+  parser.on("--dry-run", "Show planned links without changing files") { dry_run = true }
+  parser.on("--destination DIR", "Override ~/.agents/skills") { |value| destination = File.expand_path(value) }
+  parser.on("-h", "--help", "Show this help") { puts parser; exit }
+end
+
+begin
+  options.parse!
+  # This command processes all skills; positional arguments are not supported.
+  raise OptionParser::InvalidArgument, ARGV.join(" ") unless ARGV.empty?
+
+  # Locate the checkout from this script, even when invoked from another folder
+  # or through a symlink. Discover skills by their SKILL.md entrypoint; this does
+  # not validate the file's contents. Sorting keeps output predictable.
+  repository = File.dirname(File.dirname(File.realpath(__FILE__)))
+  sources = Dir.glob(File.join(repository, "skills", "*", "SKILL.md")).sort
+    .select { |path| File.file?(path) }
+    .map { |path| File.dirname(path) }
+  abort "No skills found in #{repository}/skills" if sources.empty?
+
+  linked = 0
+  unchanged = 0
+  conflicts = 0
+
+  sources.each do |source|
+    target = File.join(destination, File.basename(source))
+
+    # File.exist? follows links and returns false for broken ones. Check
+    # File.symlink? as well so a broken link is preserved as a conflict.
+    if File.symlink?(target) || File.exist?(target)
+      # Resolve relative link targets from the directory containing the link.
+      # Compare normalized paths, without following further symlinks in them.
+      correct_link = File.symlink?(target) &&
+        File.expand_path(File.readlink(target), File.dirname(target)) == source
+
+      if correct_link
+        puts "Already linked: #{target}"
+        unchanged += 1
+      else
+        # Never replace an existing file, directory, or different symlink.
+        # Keep processing other skills, then report failure in the exit status.
+        warn "Conflict: #{target} already exists; left unchanged."
+        conflicts += 1
+      end
+      next
+    end
+
+    if dry_run
+      puts "Would link: #{target} -> #{source}"
+    else
+      # mkdir_p also creates missing parents and tolerates existing directories.
+      # File.symlink takes the original folder first and the new link second.
+      FileUtils.mkdir_p(destination)
+      File.symlink(source, target)
+      puts "Linked: #{target} -> #{source}"
+    end
+    # During a dry run, this counts planned links instead of created links.
+    linked += 1
+  end
+
+  puts "#{linked} #{dry_run ? 'planned' : 'linked'}, #{unchanged} already linked, #{conflicts} conflicts."
+  # Exit 0 means success; exit 1 means a conflict or error needs attention.
+  exit(conflicts.zero? ? 0 : 1)
+rescue OptionParser::ParseError, SystemCallError, ArgumentError => error
+  # Unlike an ordinary conflict, an exception stops the run immediately.
+  # Links created earlier remain in place; there is no rollback.
+  warn "Error: #{error.message}"
+  exit 1
+end
