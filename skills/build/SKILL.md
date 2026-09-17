@@ -7,6 +7,8 @@ Execute exactly one task from the implementation plan.
 
 Read the referenced implementation plan file before doing anything else. If the user did not provide a plan file path and there is no obvious current plan file, ask for the path before continuing. Do not infer the task list from conversation alone.
 
+Read and apply [keep-it-simple](../keep-it-simple/SKILL.md), especially its implementation guidance, within the selected task and approved architecture.
+
 Before selecting or implementing a task, inspect `git status --short`. Require a clean worktree so the current `HEAD` commit is an immutable baseline for task review. If tracked or untracked changes exist, stop without modifying them and ask the user to review and commit the previous task, or otherwise move those changes out of this worktree. Do not build on an ambiguous dirty baseline.
 
 Find the next uncompleted task in the plan:
