@@ -12,6 +12,8 @@ $ARGUMENTS
 
 The human must be able to approve the behavior, architecture, and scope of impact before implementation. The builder must understand the approved decisions without the original conversation. Settle meaningful design choices; leave ordinary coding details to the builder.
 
+Read and apply [keep-it-simple](../keep-it-simple/SKILL.md), especially its planning guidance. Carry the resulting scope decisions and deliberate omissions into this plan.
+
 ## Inspect and clarify first
 
 - Read the applicable repository rules and inspect relevant implementation and coverage.
@@ -79,11 +81,14 @@ Use the following structure, adapting detail to the actual feature. The architec
 [Use a short map appropriate to the feature; do not force a linear flow onto unrelated paths.]
 
 ### Change inventory
-| Action | File / object | What changes and why |
-| --- | --- | --- |
-| Modify / Create / Rename / Remove | `actual/path` — object name | Concrete purpose |
+| Action | File / object | What changes and why | Core / non-core and supporting requirement |
+| --- | --- | --- | --- |
+| Modify / Create / Rename / Remove | `actual/path` — object name | Concrete purpose | Classification, evidence, and approval status for optional work |
 
 [Include necessary test and companion changes. Mark uncertain paths as proposed rather than pretending they are established.]
+
+### Deliberately omitted
+[Consequential possibilities left out and why they are unnecessary for the current intent. Omit this section when there is no meaningful decision to record.]
 
 ### Design decisions
 For each consequential decision:
@@ -101,6 +106,7 @@ For each consequential decision:
 
 ## Execution rules
 - Read this plan and the applicable repository rules before implementation. Confirm the selected task still matches the current code.
+- Follow this plan's core/non-core decisions and deliberate omissions. Use the simplest sufficient implementation within its approved architecture.
 - Implement and verify exactly one unfinished task in order, then stop for human diff review and a user-managed commit.
 - Follow the architecture decisions. Revisit the plan before consequential departures or substantial scope growth; report blockers rather than silently expanding the change.
 - Mark only that task completed after its implementation and required verification pass. Keep unrelated plan content intact.

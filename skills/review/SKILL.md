@@ -29,6 +29,7 @@ $ARGUMENTS
 
 ## Review Requirements
 
+- Read and apply [keep-it-simple](../keep-it-simple/SKILL.md), especially its assessment guidance, within the selected task's review boundary. Preserve the findings format below.
 - Read and follow the complete [reviewer contract](references/reviewer.md), resolving the path relative to this skill's directory.
 - Focus on correctness, behavioral regressions, security, privacy, Rails behavior, frontend behavior, missing or weak tests, maintainability, and scope violations.
 - Inspect available verification evidence. Do not assume a command passed when its result is unavailable; report the missing evidence as a residual risk or testing gap.
