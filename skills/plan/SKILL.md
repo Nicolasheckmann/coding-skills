@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Plan readable architecture, explicit changes, and blast radius before reviewable implementation tasks
+description: Produces an implementation plan with readable architecture, explicit changes, blast radius, and reviewable tasks from an intent or agreed pre-plan. Use when asked to create an implementation plan or task list, including after architectural discussion with pre-plan.
 agent: plan
 ---
 
@@ -13,6 +13,15 @@ $ARGUMENTS
 The human must be able to approve the behavior, architecture, and scope of impact before implementation. The builder must understand the approved decisions without the original conversation. Settle meaningful design choices; leave ordinary coding details to the builder.
 
 Read and apply [keep-it-simple](../keep-it-simple/SKILL.md), especially its planning guidance. Carry the resulting scope decisions and deliberate omissions into this plan.
+
+## Use an agreed pre-plan when available
+
+- If the discussion or supplied document contains a pre-plan, use its latest complete draft and explicitly agreed revisions as the architecture input. A request to create the task list, including invoking `/plan`, accepts that draft when it is complete and unambiguous; do not ask for redundant blanket approval.
+- Reconcile agreed revisions into one current design. If versions conflict or consequential questions remain unanswered, ask only for the missing resolution before decomposing tasks. Invocation alone does not resolve open decisions.
+- Verify the design's consequential references and assumptions against current code. Preserve the agreed behavior, responsibility owners, contracts, scope classifications, deliberate omissions, rationale, and any user-specified execution constraints. Reopen a settled choice only when the user requests it or concrete new evidence challenges it; explain the conflict and resolve it before proceeding.
+- A pre-plan may contain concise recommended choices and agreed decisions without a formal blast-radius assessment or execution rules. Resolve any remaining choices needing user input, expand the accepted design into this plan's decision format, and add the impact assessment and execution rules here. Their absence from pre-plan is intentional, not a reason to restart architectural discussion. If that deeper assessment reveals a consequential conflict, resolve the affected choice before task decomposition.
+- Carry the architecture into this plan so it stands alone, then add tasks that implement it. Do not silently replace accepted decisions while sizing tasks. Leave routine implementation details to the builder within the agreed boundaries.
+- Without a pre-plan, continue directly from the intent or discussion using the workflow below. Pre-plan is optional, and a complete intent does not require a separate architecture session.
 
 ## Inspect and clarify first
 
